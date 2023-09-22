@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
-
 import 'package:isar/isar.dart';
-import 'package:smartbuy/screen/home_screen.dart';
+import 'package:smartbuy/collection/categorias.dart';
+import 'package:smartbuy/collection/estado_item.dart';
+import 'package:smartbuy/isar_services.dart';
+import 'package:smartbuy/screen/lista_screen.dart';
 import 'package:smartbuy/screen/splash_screen.dart';
-import 'collection/shopping_item.dart';
-import 'collection/shopping_list.dart';
+import 'collection/item_compra.dart';
+import 'collection/lista_compras.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async { 
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationSupportDirectory();
-  final isar  = await Isar.open(
-    [ShoppingItemSchema, ShoppingListSchema], directory: dir.path,
+  final isar = await Isar.open(
+    [ItemDeCompraSchema, ListaComprasSchema, CategoriaSchema, EstadoItemSchema],
+    directory: dir.path,
   );
-  runApp(SmartBuy(isar: isar));
+
+  final isarService = IsarService(); // Create an instance of IsarService
+  
+  runApp(SmartBuy(isar: isar, isarService: isarService));
 }
 
 class SmartBuy extends StatelessWidget {
   final Isar isar;
-  const SmartBuy({Key? key, required this.isar}) : super(key: key,);
+  final IsarService isarService; // Add this field
+
+  const SmartBuy({Key? key, required this.isar, required this.isarService}) : super(key: key);
 
   // This widget is the root of your application.
-@override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/home': (context) => HomeScreen(isar: isar,), // Configure a rota para a tela inicial
+        '/home': (context) => ListaScreen(isar: isar, isarService: isarService), // Pass isarService
       },
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
