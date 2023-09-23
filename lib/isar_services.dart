@@ -1,6 +1,5 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:smartbuy/collection/estado_item.dart';
 import 'collection/categorias.dart';
 import 'collection/item_compra.dart';
 import 'collection/lista_compras.dart';
@@ -11,6 +10,8 @@ class IsarService {
   IsarService() {
     db = openDB();
   }
+
+
 
   Future<void> saveItem(ItemDeCompra newItemDeCompra) async {
     final isar = await db;
@@ -37,7 +38,11 @@ Future<void> saveShoppingList(ListaCompras newShoppingList) async {
   isar.writeTxnSync<int>(() => isar.listaCompras.putSync(newShoppingList));
 }
 
-
+Future<List<ListaCompras>> getListaCompras() async {
+  final isar = await db; // Define isar here
+  final query = isar.listaCompras.where().findAll(); // Use isar to perform the query
+  return await query;
+}
 
 Future<List<Categoria>> readAllCategoria() async {
   final isar = await db;
@@ -52,12 +57,13 @@ Future<List<ItemDeCompra>> readAllItemDeCompra() async {
 }
 
 
+
   Future<Isar> openDB() async {
     final dir = await getApplicationDocumentsDirectory();
 
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open(
-        [ItemDeCompraSchema, ListaComprasSchema, CategoriaSchema, EstadoItemSchema],
+        [ItemDeCompraSchema, ListaComprasSchema, CategoriaSchema,],
         inspector: true,
         directory: dir.path,
       );

@@ -17,13 +17,23 @@ const ItemDeCompraSchema = CollectionSchema(
   name: r'ItemDeCompra',
   id: 6969083411026076953,
   properties: {
-    r'nomeItemDeCompra': PropertySchema(
+    r'marca': PropertySchema(
       id: 0,
+      name: r'marca',
+      type: IsarType.string,
+    ),
+    r'nomeItemDeCompra': PropertySchema(
+      id: 1,
       name: r'nomeItemDeCompra',
       type: IsarType.string,
     ),
+    r'quantidade': PropertySchema(
+      id: 2,
+      name: r'quantidade',
+      type: IsarType.long,
+    ),
     r'selecionado': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'selecionado',
       type: IsarType.bool,
     )
@@ -55,6 +65,12 @@ int _itemDeCompraEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.marca;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.nomeItemDeCompra.length * 3;
   return bytesCount;
 }
@@ -65,8 +81,10 @@ void _itemDeCompraSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.nomeItemDeCompra);
-  writer.writeBool(offsets[1], object.selecionado);
+  writer.writeString(offsets[0], object.marca);
+  writer.writeString(offsets[1], object.nomeItemDeCompra);
+  writer.writeLong(offsets[2], object.quantidade);
+  writer.writeBool(offsets[3], object.selecionado);
 }
 
 ItemDeCompra _itemDeCompraDeserialize(
@@ -77,8 +95,10 @@ ItemDeCompra _itemDeCompraDeserialize(
 ) {
   final object = ItemDeCompra();
   object.idItemDeCompra = id;
-  object.nomeItemDeCompra = reader.readString(offsets[0]);
-  object.selecionado = reader.readBool(offsets[1]);
+  object.marca = reader.readStringOrNull(offsets[0]);
+  object.nomeItemDeCompra = reader.readString(offsets[1]);
+  object.quantidade = reader.readLong(offsets[2]);
+  object.selecionado = reader.readBool(offsets[3]);
   return object;
 }
 
@@ -90,8 +110,12 @@ P _itemDeCompraDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readLong(offset)) as P;
+    case 3:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -256,6 +280,158 @@ extension ItemDeCompraQueryFilter
   }
 
   QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      marcaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'marca',
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      marcaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'marca',
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition> marcaEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'marca',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      marcaGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'marca',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition> marcaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'marca',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition> marcaBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'marca',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      marcaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'marca',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition> marcaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'marca',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition> marcaContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'marca',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition> marcaMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'marca',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      marcaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'marca',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      marcaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'marca',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
       nomeItemDeCompraEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -392,6 +568,62 @@ extension ItemDeCompraQueryFilter
   }
 
   QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      quantidadeEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'quantidade',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      quantidadeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'quantidade',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      quantidadeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'quantidade',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
+      quantidadeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'quantidade',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterFilterCondition>
       selecionadoEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -424,6 +656,18 @@ extension ItemDeCompraQueryLinks
 
 extension ItemDeCompraQuerySortBy
     on QueryBuilder<ItemDeCompra, ItemDeCompra, QSortBy> {
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy> sortByMarca() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marca', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy> sortByMarcaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marca', Sort.desc);
+    });
+  }
+
   QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy>
       sortByNomeItemDeCompra() {
     return QueryBuilder.apply(this, (query) {
@@ -435,6 +679,19 @@ extension ItemDeCompraQuerySortBy
       sortByNomeItemDeCompraDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeItemDeCompra', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy> sortByQuantidade() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'quantidade', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy>
+      sortByQuantidadeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'quantidade', Sort.desc);
     });
   }
 
@@ -468,6 +725,18 @@ extension ItemDeCompraQuerySortThenBy
     });
   }
 
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy> thenByMarca() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marca', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy> thenByMarcaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'marca', Sort.desc);
+    });
+  }
+
   QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy>
       thenByNomeItemDeCompra() {
     return QueryBuilder.apply(this, (query) {
@@ -479,6 +748,19 @@ extension ItemDeCompraQuerySortThenBy
       thenByNomeItemDeCompraDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeItemDeCompra', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy> thenByQuantidade() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'quantidade', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QAfterSortBy>
+      thenByQuantidadeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'quantidade', Sort.desc);
     });
   }
 
@@ -498,11 +780,24 @@ extension ItemDeCompraQuerySortThenBy
 
 extension ItemDeCompraQueryWhereDistinct
     on QueryBuilder<ItemDeCompra, ItemDeCompra, QDistinct> {
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QDistinct> distinctByMarca(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'marca', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<ItemDeCompra, ItemDeCompra, QDistinct>
       distinctByNomeItemDeCompra({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nomeItemDeCompra',
           caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, ItemDeCompra, QDistinct> distinctByQuantidade() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'quantidade');
     });
   }
 
@@ -521,10 +816,22 @@ extension ItemDeCompraQueryProperty
     });
   }
 
+  QueryBuilder<ItemDeCompra, String?, QQueryOperations> marcaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'marca');
+    });
+  }
+
   QueryBuilder<ItemDeCompra, String, QQueryOperations>
       nomeItemDeCompraProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nomeItemDeCompra');
+    });
+  }
+
+  QueryBuilder<ItemDeCompra, int, QQueryOperations> quantidadeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'quantidade');
     });
   }
 

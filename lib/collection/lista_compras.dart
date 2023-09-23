@@ -9,6 +9,7 @@ class ListaCompras {
   late String nomeLista;
   late DateTime dataCriacao;
   final items = IsarLinks<ItemDeCompra>();
+ 
 
   Future<void> save(Isar isar) async {
     await isar.writeTxn(() async {

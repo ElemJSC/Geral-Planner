@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:isar/isar.dart';
 import 'package:smartbuy/collection/item_compra.dart';
 import 'package:smartbuy/isar_services.dart';
-import 'package:smartbuy/screen/itens_screen.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 
 class SelectItens extends StatefulWidget {
@@ -28,7 +26,7 @@ class _SelectItensState extends State<SelectItens> {
   List<ItemDeCompra> itemsList = [];
   List<ItemDeCompra> itensSelecionados = [];
 
-  @override
+   @override
   void initState() {
     super.initState();
     _loadItems();
@@ -38,7 +36,10 @@ class _SelectItensState extends State<SelectItens> {
     final itemsCollection = widget.isar.itemDeCompras;
     final allItems = await itemsCollection.where().findAll();
     setState(() {
-      itemsList = allItems;
+      itemsList = allItems.map((item) {
+        item.selecionado = false;
+        return item;
+      }).toList();
     });
   }
 
@@ -81,20 +82,24 @@ class _SelectItensState extends State<SelectItens> {
           Expanded(
             // Wrap the ListView.builder with Expanded
             child: ListView.builder(
-              itemCount: itemsList.length,
-              itemBuilder: (context, index) {
-                final item = itemsList[index];
-                return CheckboxListTile(
-                  title: Text('${item.nomeItemDeCompra}'),
-                  value: item.selecionado,
-                  onChanged: (newValue) {
-                    setState(() {
-                      item.selecionado = newValue!;
-                    });
-                  },
-                );
-              },
-            ),
+  itemCount: itemsList.length,
+  itemBuilder: (context, index) {
+    final item = itemsList[index];
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return CheckboxListTile(
+          title: Text('${item.nomeItemDeCompra}'),
+          value: item.selecionado,
+          onChanged: (newValue) {
+            setState(() {
+              item.selecionado = newValue!;
+            });
+          },
+        );
+      },
+    );
+  },
+),
           ),
         ],
       ),
@@ -104,14 +109,16 @@ class _SelectItensState extends State<SelectItens> {
         hoverElevation: 50,
         hoverColor: Colors.orange,
         onPressed: () {
-          itensSelecionados.clear(); // Clear the list to avoid duplicates
+          itensSelecionados.clear(); // Limpe a lista para evitar duplicatas
           for (final item in itemsList) {
             if (item.selecionado) {
               itensSelecionados.add(item);
+              // Redefina o estado do item na lista itemsList para desmarcar o checkbox
+              item.selecionado = false;
             }
           }
 
-          // Return the selected items to the previous screen
+          // Return os itens selecionados para a tela anterior
           Navigator.pop(context, itensSelecionados);
         },
         child: Image.asset(

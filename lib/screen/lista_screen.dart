@@ -21,7 +21,8 @@ class ListaScreen extends StatefulWidget {
 class _ListaScreenState extends State<ListaScreen> {
   final TextEditingController nomeListaController = TextEditingController();
   final DateTime dataCriacao = DateTime.now();
-
+ List<ItemDeCompra> itemsList = [];
+ 
   @override
   void initState() {
     super.initState();
@@ -32,87 +33,97 @@ class _ListaScreenState extends State<ListaScreen> {
   void onItemsSelected(List<ItemDeCompra> itensSelecionados) {
     // Handle the selected items here, if needed
   }
-
-  void _showSaveListAlert() async {
-    // Clear the text field when opening the alert dialog
-    nomeListaController.clear();
-
-    // Navigate to the SelectItens screen to select items
-    final selectedItems = await Navigator.push<List<ItemDeCompra>>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectItens(
-          isar: widget.isar,
-          isarService: widget.isarService,
-          nomeLista: nomeListaController.text.trim(),
-          onItemsSelected: onItemsSelected, // Pass the callback here
-        ),
-      ),
-    );
-
-    if (selectedItems != null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Nova Lista de Compras'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nomeListaController,
-                  decoration: InputDecoration(labelText: 'Nome da Lista'),
-                ),
-                // Other input fields, if needed
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Cancelar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text('Salvar'),
-                onPressed: () async {
-                  // Check if the nomeLista is empty or contains only whitespace
-                  final nomeLista = nomeListaController.text.trim();
-                  if (nomeLista.isEmpty) {
-                    // Show an error message or handle the empty name case
-                    // For example, you can display a snackbar or alert
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('O nome da lista não pode estar em branco.'),
-                      ),
-                    );
-                  } else {
-                    // Create a new shopping list
-                    final dataCriacao = DateTime.now();
-                    final isarService = widget.isarService;
-                    final newShoppingList = ListaCompras()
-                      ..nomeLista = nomeLista
-                      ..dataCriacao = dataCriacao;
-
-                    // Add selected items to the shopping list
-                    newShoppingList.items.addAll(selectedItems);
-
-                    // Save the new shopping list using the IsarService
-                    await isarService.saveShoppingList(newShoppingList);
-
-                    // Close the dialog
-                    Navigator.of(context).pop();
-
-                    // Navigate to another screen or perform other actions if needed
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+void _resetItemSelections() {
+    setState(() {
+      for (final item in itemsList) {
+        item.selecionado = false;
+      }
+    });
   }
+
+ void _showSaveListAlert() async {
+  // Clear the text field when opening the alert dialog
+  nomeListaController.clear();
+
+  // Reset the checkboxes
+  _resetItemSelections();
+
+  // Navigate to the SelectItens screen to select items
+  final selectedItems = await Navigator.push<List<ItemDeCompra>>(
+    context,
+    MaterialPageRoute(
+      builder: (context) => SelectItens(
+        isar: widget.isar,
+        isarService: widget.isarService,
+        nomeLista: nomeListaController.text.trim(),
+        onItemsSelected: onItemsSelected, // Pass the callback here
+      ),
+    ),
+  );
+
+  if (selectedItems != null) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Nova Lista de Compras'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nomeListaController,
+                decoration: InputDecoration(labelText: 'Nome da Lista'),
+              ),
+              // Other input fields, if needed
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Salvar'),
+              onPressed: () async {
+                // Check if the nomeLista is empty or contains only whitespace
+                final nomeLista = nomeListaController.text.trim();
+                if (nomeLista.isEmpty) {
+                  // Show an error message or handle the empty name case
+                  // For example, you can display a snackbar or alert
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('O nome da lista não pode estar em branco.'),
+                    ),
+                  );
+                } else {
+                  // Create a new shopping list
+                  final dataCriacao = DateTime.now();
+                  final isarService = widget.isarService;
+                  final newShoppingList = ListaCompras()
+                    ..nomeLista = nomeLista
+                    ..dataCriacao = dataCriacao;
+
+                  // Add selected items to the shopping list
+                  newShoppingList.items.addAll(selectedItems);
+
+                  // Save the new shopping list using the IsarService
+                  await isarService.saveShoppingList(newShoppingList);
+
+                  // Close the dialog
+                  Navigator.of(context).pop();
+
+                  // Navigate to another screen or perform other actions if needed
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {

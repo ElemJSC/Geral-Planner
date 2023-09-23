@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:smartbuy/collection/categorias.dart';
-import 'package:smartbuy/collection/estado_item.dart';
 import 'package:smartbuy/isar_services.dart';
 import 'package:smartbuy/screen/lista_screen.dart';
 import 'package:smartbuy/screen/splash_screen.dart';
@@ -13,7 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationSupportDirectory();
   final isar = await Isar.open(
-    [ItemDeCompraSchema, ListaComprasSchema, CategoriaSchema, EstadoItemSchema],
+    [ItemDeCompraSchema, ListaComprasSchema, CategoriaSchema,],
     directory: dir.path,
   );
 
